@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1>Добро пожаловать в цветочный магазин!</h1>
+    <p class="lead">Скоро здесь будет каталог цветов</p>
+    
+    {% if user.is_authenticated %}
+        <a href="/admin/flowers/flower/add/" class="btn btn-primary btn-lg">Добавить первый цветок (через админку)</a>
+    {% else %}
+        <a href="/accounts/register/" class="btn btn-success btn-lg">Зарегистрироваться</a>
+    {% endif %}
+</div>
+{% endblock %}

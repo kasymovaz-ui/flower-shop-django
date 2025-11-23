@@ -1,0 +1,22 @@
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+*.log
+local_settings.py
+
+# Виртуальное окружение
+venv/
+env/
+ENV/
+
+# VS Code
+.vscode/
+.idea/
+
+# Media и статика (если будут)
+media/
+staticfiles/
+
+# Миграции (иногда их тоже не коммитят на первом этапе, но мы оставим)
+# migrations/

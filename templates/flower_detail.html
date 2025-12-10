@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                {% if flower.image %}
+                    <img src="{{ flower.image.url }}" class="card-img-top" style="max-height: 500px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light text-center py-5">
+                        <h2>Фото отсутствует</h2>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h1>{{ flower.title }}</h1>
+                    <p><strong>Категория:</strong> {{ flower.category.name }}</p>
+                    <h2 class="text-success">{{ flower.price }} ₽</h2>
+                    <p><strong>Остаток:</strong> {{ flower.stock }} шт.</p>
+                    {% if flower.description %}
+                        <p class="mt-4">{{ flower.description|linebreaks }}</p>
+                    {% endif %}
+                    <a href="/" class="btn btn-secondary">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

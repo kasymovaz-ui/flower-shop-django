@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Каталог цветов</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; color: #28a745; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #28a745; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .price { font-weight: bold; color: #28a745; }
+        .in_stock { color: #28a745; }
+        .out_stock { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>🌸 Каталог цветов</h1>
+    <p><strong>Дата:</strong> {{ now|date:"d.m.Y H:i" }}</p>
+    <p><strong>Всего товаров:</strong> {{ flowers|length }}</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Категория</th>
+                <th>Описание</th>
+                <th class="price">Цена</th>
+                <th>Остаток</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flower in flowers %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><strong>{{ flower.title }}</strong></td>
+                <td>{{ flower.category.name }}</td>
+                <td>{{ flower.description|truncatewords:10 }}</td>
+                <td class="price">{{ flower.price }} ₽</td>
+                <td>{{ flower.stock }}</td>
+                <td>
+                    {% if flower.stock > 0 %}
+                        <span class="in_stock">✅ В наличии</span>
+                    {% else %}
+                        <span class="out_stock">❌ Нет в наличии</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

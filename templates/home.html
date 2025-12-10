@@ -1,14 +1,60 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="text-center">
-    <h1>Добро пожаловать в цветочный магазин!</h1>
-    <p class="lead">Скоро здесь будет каталог цветов</p>
-    
+<div class="container mt-5">
+    <h1 class="text-center text-success mb-4">Каталог цветов</h1>
+
     {% if user.is_authenticated %}
-        <a href="/admin/flowers/flower/add/" class="btn btn-primary btn-lg">Добавить первый цветок (через админку)</a>
-    {% else %}
-        <a href="/accounts/register/" class="btn btn-success btn-lg">Зарегистрироваться</a>
+    <div class="text-end mb-4">
+        <a href="{% url 'flowers:flower_add' %}" class="btn btn-success">Добавить цветок</a>
+        <a href="{% url 'flowers:export_pdf' %}" class="btn btn-danger ms-3">PDF Каталог</a>
+    </div>
     {% endif %}
+
+    <form method="get" class="mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Поиск по названию или описанию..." value="{{ query }}">
+                <div class="text-center mt-2">
+                    <button type="submit" class="btn btn-outline-success">Найти</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for flower in flowers %}
+        <div class="col">
+            <div class="card h-100 shadow">
+                {% if flower.image %}
+                    <img src="{{ flower.image.url }}" class="card-img-top" style="height: 300px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light text-center py-5">
+                        <h4 class="text-success">Фото</h4>
+                    </div>
+                {% endif %}
+                <div class="card-body text-center">
+                    <h5>{{ flower.title }}</h5>
+                    <p class="text-success fs-3 fw-bold">{{ flower.price }} ₽</p>
+                    <small class="text-muted">В наличии: {{ flower.stock }} шт.</small>
+
+                    <div class="mt-3">
+                        <a href="{% url 'flowers:flower_detail' flower.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'flowers:flower_delete' flower.pk %}" 
+                               class="btn btn-outline-danger btn-sm ms-2"
+                               onclick="return confirm('Точно удалить {{ flower.title }}?')">
+                                Удалить
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h3>Цветов пока нет</h3>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

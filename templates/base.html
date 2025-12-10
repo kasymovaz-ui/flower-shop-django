@@ -10,13 +10,17 @@
         <div class="container">
             <a class="navbar-brand" href="/">Цветочный магазин</a>
             <div>
-                {% if user.is_authenticated %}
-                    <span class="navbar-text text-white me-3">Привет, {{ user.username }}!</span>
-                    <a href="/accounts/logout/" class="btn btn-outline-light btn-sm">Выйти</a>
-                {% else %}
-                    <a href="/accounts/login/" class="btn btn-outline-light btn-sm me-2">Войти</a>
-                    <a href="/accounts/register/" class="btn btn-light btn-sm">Регистрация</a>
-                {% endif %}
+            <!-- Внутри <div class="container mt-4"> добавь это после nav -->
+{% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
             </div>
         </div>
     </nav>

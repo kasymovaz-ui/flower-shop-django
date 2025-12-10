@@ -1,30 +1,98 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
+from django.http import HttpResponse
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
 from .models import Flower, Category
 
+
 def home(request):
-    flowers = Flower.objects.filter(available=True)
-    return render(request, 'home.html', {'flowers': flowers})
+    flowers = Flower.objects.all()
+    categories = Category.objects.all()
+
+    query = request.GET.get('q')
+    if query:
+        flowers = flowers.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    return render(request, 'home.html', {
+        'flowers': flowers,
+        'categories': categories,
+        'query': query or ''
+    })
+
+
+def flower_detail(request, pk):
+    flower = get_object_or_404(Flower, pk=pk)
+    return render(request, 'flower_detail.html', {'flower': flower})
+
 
 @login_required
 def flower_add(request):
     categories = Category.objects.all()
+
     if request.method == 'POST':
-        title = request.POST['title']
+        title = request.POST['title'].strip()
         category_id = request.POST['category']
         price = request.POST['price']
         stock = request.POST['stock']
+        description = request.POST.get('description', '')
 
-        Flower.objects.create(
+        flower = Flower(
             title=title,
-            slug=title.lower().replace(' ', '-').replace('ё', 'е'),
             category_id=category_id,
             price=price,
             stock=stock,
-            available=True
+            description=description
         )
-        messages.success(request, 'Цветок успешно добавлен!')
-        return redirect('home')
+        if 'image' in request.FILES:
+            flower.image = request.FILES['image']
+        flower.save()
+
+        messages.success(request, f'"{title}" добавлен!')
+        return redirect('flowers:home')
 
     return render(request, 'flower_form.html', {'categories': categories})
+
+
+@login_required
+def flower_delete(request, pk):
+    flower = get_object_or_404(Flower, pk=pk)
+    
+    if request.method == 'POST':
+        title = flower.title
+        flower.delete()
+        messages.success(request, f'Цветок "{title}" удалён!')
+        return redirect('flowers:home')
+    
+    return render(request, 'flower_confirm_delete.html', {'flower': flower})
+
+
+@login_required
+def export_pdf(request):
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="catalog.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = []
+
+    story.append(Paragraph("Каталог цветов", styles['Title']))
+    story.append(Spacer(1, 20))
+
+    data = [['№', 'Название', 'Категория', 'Цена', 'Остаток']]
+    for i, f in enumerate(Flower.objects.all(), 1):
+        data.append([str(i), f.title, f.category.name, f"{f.price} ₽", str(f.stock)])
+
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.green),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
+        ('GRID', (0,0), (-1,-1), 1, colors.black)
+    ]))
+    story.append(table)
+    doc.build(story)
+    return response

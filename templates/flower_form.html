@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container py-5">
+<div class="container mt-5">
     <h2 class="text-center mb-5">Добавить цветок</h2>
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-md-6">
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="text" name="title" class="form-control mb-3" placeholder="Название" required>
@@ -19,6 +19,9 @@
                 <input type="file" name="image" class="form-control mb-4">
                 <button type="submit" class="btn btn-success w-100 btn-lg">Добавить цветок</button>
             </form>
+            <div class="text-center mt-3">
+                <a href="{% url 'flowers:home' %}" class="btn btn-secondary">Отмена</a>
+            </div>
         </div>
     </div>
 </div>

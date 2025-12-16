@@ -1,14 +1,8 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center text-success mb-4">Каталог цветов</h1>
-
-    {% if user.is_authenticated %}
-    <div class="text-end mb-4">
-        <a href="{% url 'flowers:flower_add' %}" class="btn btn-success">Добавить цветок</a>
-        <a href="{% url 'flowers:export_pdf' %}" class="btn btn-danger ms-3">PDF Каталог</a>
-    </div>
-    {% endif %}
 
     <form method="get" class="mb-4">
         <div class="row justify-content-center">
@@ -40,8 +34,7 @@
                     <div class="mt-3">
                         <a href="{% url 'flowers:flower_detail' flower.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
                         {% if user.is_authenticated %}
-                            <a href="{% url 'flowers:flower_delete' flower.pk %}" 
-                               class="btn btn-outline-danger btn-sm ms-2"
+                            <a href="{% url 'flowers:flower_delete' flower.pk %}" class="btn btn-outline-danger btn-sm ms-2"
                                onclick="return confirm('Точно удалить {{ flower.title }}?')">
                                 Удалить
                             </a>

@@ -84,15 +84,37 @@ def export_pdf(request):
     story.append(Spacer(1, 20))
 
     data = [['№', 'Название', 'Категория', 'Цена', 'Остаток']]
-    for i, f in enumerate(Flower.objects.all(), 1):
-        data.append([str(i), f.title, f.category.name, f"{f.price} ₽", str(f.stock)])
+    for i, flower in enumerate(Flower.objects.all(), 1):
+        data.append([
+            str(i),
+            flower.title,
+            flower.category.name,
+            f"{flower.price} ₽",
+            str(flower.stock)
+        ])
 
     table = Table(data)
     table.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), colors.green),
-        ('TEXTCOLOR', (0,0), (-1,0), colors.whitesmoke),
-        ('GRID', (0,0), (-1,-1), 1, colors.black)
+        ('BACKGROUND', (0, 0), (-1, 0), colors.green),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 0), (-1, -1), 'Courier'),  # <-- Courier — поддерживает русский!
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
     ]))
+
     story.append(table)
     doc.build(story)
     return response
+
+@login_required
+def flower_delete(request, pk):
+    flower = get_object_or_404(Flower, pk=pk)
+    if request.method == 'POST':
+        flower.delete()
+        messages.success(request, 'Цветок удалён!')
+        return redirect('flowers:home')
+    return render(request, 'flower_confirm_delete.html', {'flower': flower})

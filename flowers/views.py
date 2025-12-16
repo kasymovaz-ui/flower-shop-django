@@ -98,7 +98,7 @@ def export_pdf(request):
         ('BACKGROUND', (0, 0), (-1, 0), colors.green),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 0), (-1, -1), 'Courier'),  # <-- Courier — поддерживает русский!
+        ('FONTNAME', (0, 0), (-1, -1), 'Courier'), 
         ('FONTSIZE', (0, 0), (-1, -1), 12),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),

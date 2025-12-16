@@ -1,8 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'flowers'  # <-- ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ!
-
+app_name = 'flowers'
 urlpatterns = [
     path('', views.home, name='home'),
     path('add/', views.flower_add, name='flower_add'),
